@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="author" content="Atanas Roussev">
+    <meta name="date" content="20169-10-27" scheme="YYYY-MM-DD">
+
+    <script src="ext/jquery-3.1.1.min.js"></script>
+    <script src="ext/underscore-min.js"></script>
+    <link rel="stylesheet" href="ext/lottery.css">
+
+    <script src="src/Common.js"></script>
+    <script src="src/Mask.js"></script>
+    <script src="src/Number.js"></script>
+    <script src="src/Ticket.js"></script>
+    <script src="src/RecursionSearch.js"></script>
+    <script src="src/BinarySearch.js"></script>
+
+    <title>Lottery Ticket Generator</title>
+</head>
+<body>
+
+<main>
+    <h1>Lottery Ticket Generator</h1>
+    <section id="input">
+        <h2>Input numbers</h2>
+        <textarea placeholder="Type numbers on separate rows e.g. 1234567890" class="code"></textarea>
+        <a id="RecursionSearch" class="button">Recursion Search</a> &nbsp;
+        <a id="BinarySearch" class="button">Binary Search</a>
+    </section>
+    <section id="output">
+        <h2>Valid tickets <em>( **hint** open browser console too)</em></h2>
+        <div id="tickets" class="code"></div>
+    </section>
+</main>
+
+<script>
+
+    $().ready(function () {
+        var input = $('textarea');
+        var output = $('#tickets');
+
+        input.blur(function () {
+            trimInput_(input);
+        });
+
+        var trimInput_ = function (input) {
+            var lines = input.val().split(/\n/);
+            var texts = [];
+            for (var i = 0; i < lines.length; i++) {
+                if (/\S/.test(lines[i])) {
+                    texts.push($.trim(lines[i]));
+                }
+            }
+            var n = texts.toString().split(",").join("\n");
+            input.val(n);
+        };
+
+        var inputNumbers_ = function () {
+            return input.val().trim().split('\n')
+        };
+
+        var printOutput_ = function (number, arr) {
+            var displayString = '';
+            arr.forEach(function (ticket) {
+                displayString += '<p class="row code">' + ticket.join('&nbsp;&nbsp;&nbsp;') + '</p>';
+            });
+            if (number && number.length > 0) {
+                output.html(output.html() + '<p class="number code">' + number + ':</p>' +
+                        (displayString.length > 0 ? displayString : '<p class="row code">none</p>'));
+            }
+        };
+
+        ['Recursion', 'Binary'].forEach(function (type) {
+            $('#' + type + 'Search').click(function () {
+                output.html('');
+                trimInput_(input);
+                console.clear();
+                dp[type + 'Search'].start(inputNumbers_(), printOutput_);
+            });
+        });
+
+    });
+</script>
+
+<footer>
+    <h3>Problem:</h3>
+    Winning Ticket!
+
+    Your favorite uncle, Morty, is crazy about the lottery and even crazier about how he picks his “lucky” numbers. And
+    even though his “never fail” strategy has yet to succeed, Uncle Morty doesn't let that get him down.
+
+    Every week he searches through the Sunday newspaper to find a string of digits that might be potential lottery
+    picks. But this week the newspaper has moved to a new electronic format, and instead of a comfortable pile of
+    papers, Uncle Morty receives a text file with the stories.
+
+    Help your Uncle find his lotto picks. Given a large series of number strings, return each that might be suitable for
+    a lottery ticket pick. Note that a valid lottery ticket must have 7 unique numbers between 1 and 59, digits must be
+    used in order, and every digit must be used.
+
+    For example, given the following strings:
+
+    [ “1”, “42". “100848", “4938532894754”, “1234567”, “472844278465445”]
+
+    Your function should return:
+
+    4938532894754 -> 49 38 53 28 9 47 54
+    1234567 -> 1 2 3 4 5 6 7
+</footer>
+
+</body>
+</html>
